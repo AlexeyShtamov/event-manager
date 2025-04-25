@@ -1,4 +1,4 @@
-package ru.shtamov.eventmanaget.application.models;
+package ru.shtamov.eventmanaget.model.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

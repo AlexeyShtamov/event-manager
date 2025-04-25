@@ -1,15 +1,13 @@
-package ru.shtamov.eventmanaget.application.services;
+package ru.shtamov.eventmanaget.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.shtamov.eventmanaget.application.LocationConverter;
-import ru.shtamov.eventmanaget.application.models.Location;
-import ru.shtamov.eventmanaget.extern.exceptions.IsAlreadyExistException;
-import ru.shtamov.eventmanaget.reps.models.LocationEntity;
-import ru.shtamov.eventmanaget.reps.repositories.LocationRepository;
+import ru.shtamov.eventmanaget.converter.LocationConverter;
+import ru.shtamov.eventmanaget.model.domain.Location;
+import ru.shtamov.eventmanaget.exception.IsAlreadyExistException;
+import ru.shtamov.eventmanaget.model.entity.LocationEntity;
+import ru.shtamov.eventmanaget.repositorie.LocationRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;

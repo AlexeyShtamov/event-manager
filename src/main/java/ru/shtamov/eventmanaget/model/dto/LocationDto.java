@@ -1,4 +1,4 @@
-package ru.shtamov.eventmanaget.extern.models;
+package ru.shtamov.eventmanaget.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

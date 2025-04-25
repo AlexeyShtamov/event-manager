@@ -1,8 +1,8 @@
-package ru.shtamov.eventmanaget.application;
+package ru.shtamov.eventmanaget.converter;
 
 import org.springframework.stereotype.Component;
-import ru.shtamov.eventmanaget.application.models.Location;
-import ru.shtamov.eventmanaget.reps.models.LocationEntity;
+import ru.shtamov.eventmanaget.model.domain.Location;
+import ru.shtamov.eventmanaget.model.entity.LocationEntity;
 
 @Component
 public class LocationConverter {

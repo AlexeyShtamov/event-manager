@@ -1,4 +1,4 @@
-package ru.shtamov.eventmanaget.reps.models;
+package ru.shtamov.eventmanaget.model.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

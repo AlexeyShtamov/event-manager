@@ -1,13 +1,13 @@
-package ru.shtamov.eventmanaget.extern.controllers;
+package ru.shtamov.eventmanaget.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.shtamov.eventmanaget.application.services.LocationService;
-import ru.shtamov.eventmanaget.extern.LocationDtoConverter;
-import ru.shtamov.eventmanaget.extern.models.LocationDto;
+import ru.shtamov.eventmanaget.service.LocationService;
+import ru.shtamov.eventmanaget.converter.LocationDtoConverter;
+import ru.shtamov.eventmanaget.model.dto.LocationDto;
 
 import java.util.List;
 
