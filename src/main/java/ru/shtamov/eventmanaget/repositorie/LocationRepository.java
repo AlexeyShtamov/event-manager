@@ -1,8 +1,8 @@
-package ru.shtamov.eventmanaget.reps.repositories;
+package ru.shtamov.eventmanaget.repositorie;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.shtamov.eventmanaget.reps.models.LocationEntity;
+import ru.shtamov.eventmanaget.model.entity.LocationEntity;
 
 import java.util.Optional;
 
@@ -10,4 +10,9 @@ import java.util.Optional;
 public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
 
     Optional<LocationEntity> findByName(String name);
+
+
+    boolean existsByName(String name);
+
+    boolean existsById(Long id);
 }

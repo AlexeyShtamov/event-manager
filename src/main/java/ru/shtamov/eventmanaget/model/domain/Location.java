@@ -1,4 +1,4 @@
-package ru.shtamov.eventmanaget.application.models;
+package ru.shtamov.eventmanaget.model.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Location {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String address;
     private Integer capacity;

@@ -1,11 +1,12 @@
-package ru.shtamov.eventmanaget.extern.models;
+package ru.shtamov.eventmanaget.model.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record LocationDto(
 
-        Integer id,
+        Long id,
 
         @NotBlank
         String name,
@@ -13,9 +14,9 @@ public record LocationDto(
         @NotBlank
         String address,
 
+        @Min(5)
         Integer capacity,
 
-        @Size(min = 3, max = 750)
         String description
 ){
 

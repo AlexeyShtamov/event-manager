@@ -1,13 +1,14 @@
-package ru.shtamov.eventmanaget.extern.controllers;
+package ru.shtamov.eventmanaget.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.shtamov.eventmanaget.application.services.LocationService;
-import ru.shtamov.eventmanaget.extern.LocationDtoConverter;
-import ru.shtamov.eventmanaget.extern.models.LocationDto;
+import ru.shtamov.eventmanaget.model.dto.CreateLocationDto;
+import ru.shtamov.eventmanaget.service.LocationService;
+import ru.shtamov.eventmanaget.converter.LocationDtoConverter;
+import ru.shtamov.eventmanaget.model.dto.LocationDto;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class LocationController {
     private final LocationDtoConverter locationDtoConverter;
 
     @PostMapping
-    public ResponseEntity<LocationDto> create(@RequestBody @Valid LocationDto locationDto){
+    public ResponseEntity<LocationDto> create(@RequestBody @Valid CreateLocationDto locationDto){
         LocationDto createdLocation =
                 locationDtoConverter
                         .toDto(locationService.createLocation(locationDtoConverter.toDomain(locationDto)));
@@ -31,7 +32,7 @@ public class LocationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LocationDto> findOne(@PathVariable Integer id){
+    public ResponseEntity<LocationDto> findOne(@PathVariable Long id){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(locationDtoConverter.toDto(locationService.findLocation(id)));
@@ -49,7 +50,7 @@ public class LocationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LocationDto> update(@PathVariable Integer id, @RequestBody @Valid LocationDto locationDto){
+    public ResponseEntity<LocationDto> update(@PathVariable Long id, @RequestBody @Valid CreateLocationDto locationDto){
         LocationDto updatedLocation =
                 locationDtoConverter
                         .toDto(locationService.updateLocation(id, locationDtoConverter.toDomain(locationDto)));
@@ -61,7 +62,7 @@ public class LocationController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Integer id){
+    public ResponseEntity<?> delete(@PathVariable Long id){
         locationService.deleteLocation(id);
 
         return ResponseEntity

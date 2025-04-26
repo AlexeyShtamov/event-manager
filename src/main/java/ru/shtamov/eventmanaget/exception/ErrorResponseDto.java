@@ -1,4 +1,4 @@
-package ru.shtamov.eventmanaget.extern.exceptions;
+package ru.shtamov.eventmanaget.exception;
 
 import java.time.LocalDateTime;
 
