@@ -1,5 +1,6 @@
 package ru.shtamov.eventmanaget.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class AuthController {
     private final UserDtoConverter userDtoConverter;
 
     @PostMapping("/users")
-    public ResponseEntity<UserDto> createUser(@RequestBody RegisterUserDto userDto){
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid RegisterUserDto userDto){
         User createdUser = authenticationService.registerUser(userDtoConverter.toDomain(userDto), userDto.password());
 
         return ResponseEntity
@@ -31,7 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/users/auth")
-    public ResponseEntity<JwtResponse> authenticateUser(@RequestBody EnterUserDto userDto){
+    public ResponseEntity<JwtResponse> authenticateUser(@RequestBody @Valid EnterUserDto userDto){
         String jwt = authenticationService.authenticateUser(userDto.login(), userDto.password());
 
         return ResponseEntity
