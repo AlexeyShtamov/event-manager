@@ -23,7 +23,8 @@ public class LocationEntity {
     private String description;
 
 
-    public LocationEntity(String name, String address, Integer capacity, String description) {
+    public LocationEntity(Long id, String name, String address, Integer capacity, String description) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.capacity = capacity;

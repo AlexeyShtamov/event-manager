@@ -9,6 +9,7 @@ public class LocationConverter {
 
     public LocationEntity toEntity(Location location){
         return new LocationEntity(
+                location.getId(),
                 location.getName(),
                 location.getAddress(),
                 location.getCapacity(),
@@ -19,7 +20,7 @@ public class LocationConverter {
 
     public Location toDomain(LocationEntity locationEntity){
           return new Location(
-                  Math.toIntExact(locationEntity.getId()),
+                  locationEntity.getId(),
                   locationEntity.getName(),
                   locationEntity.getAddress(),
                   locationEntity.getCapacity(),

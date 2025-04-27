@@ -22,19 +22,20 @@ public class LocationService {
 
     public Location createLocation(Location location){
 
-        if (locationRepository.findByName(location.getName()).isPresent())
+        if (locationRepository.existsByName(location.getName()))
             throw new IsAlreadyExistException("Локация с названием %s уже существует".formatted(location.getName()));
 
-        LocationEntity createdLocEntity = locationRepository.save(locationConverter.toEntity(location));
+        Location cretedLocation = locationConverter
+                .toDomain(locationRepository.save(locationConverter.toEntity(location)));
 
-        log.info("Локация с именем {} и id {} сохранена", createdLocEntity.getName(), createdLocEntity.getId());
+        log.info("Локация с именем {} и id {} сохранена", cretedLocation.getName(), cretedLocation.getId());
 
-        return locationConverter.toDomain(createdLocEntity);
+        return cretedLocation;
 
     }
 
-    public Location findLocation(Integer id){
-        Location foundedLocation = locationConverter.toDomain(locationRepository.findById(Long.valueOf(id))
+    public Location findLocation(Long id){
+        Location foundedLocation = locationConverter.toDomain(locationRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Нет локации с id " + id)));
 
         log.info("Локация с id {} найдена, имя:  {}", id, foundedLocation.getName());
@@ -51,16 +52,13 @@ public class LocationService {
         return locations;
     }
 
-    public Location updateLocation(Integer id, Location location){
-        LocationEntity foundedLocation = locationRepository.findById(Long.valueOf(id))
-                .orElseThrow(() -> new NoSuchElementException("Нет локации с id " + id));
+    public Location updateLocation(Long id, Location location){
+        if(!locationRepository.existsById(id))
+                throw new NoSuchElementException("Нет локации с id " + id);
 
-        foundedLocation.setAddress(location.getAddress());
-        foundedLocation.setDescription(location.getDescription());
-        foundedLocation.setCapacity(location.getCapacity());
-        foundedLocation.setName(location.getName());
-
-        Location updatedLocation = locationConverter.toDomain(locationRepository.save(foundedLocation));
+        location.setId(id);
+        Location updatedLocation = locationConverter
+                .toDomain(locationRepository.save(locationConverter.toEntity(location)));
 
         log.info("Локация с id {} обновлена", id);
 
@@ -68,11 +66,11 @@ public class LocationService {
 
     }
 
-    public void deleteLocation(Integer id){
-        locationRepository.findById(Long.valueOf(id))
-                .orElseThrow(() -> new NoSuchElementException("Нет локации с id " + id));
+    public void deleteLocation(Long id){
+        if (!locationRepository.existsById(id))
+                throw new NoSuchElementException("Нет локации с id " + id);
 
-        locationRepository.deleteById(Long.valueOf(id));
+        locationRepository.deleteById(id);
 
         log.info("Локация с id {} удалена", id);
     }
