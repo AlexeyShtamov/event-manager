@@ -8,13 +8,13 @@ import lombok.Setter;
 @Setter
 public class User {
 
-    private Integer id;
+    private Long id;
     private String login;
     private String password;
     private Integer age;
     private UserRole userRole;
 
-    public User(Integer id, String login, Integer age, UserRole userRole) {
+    public User(Long id, String login, Integer age, UserRole userRole) {
         this.id = id;
         this.login = login;
         this.age = age;

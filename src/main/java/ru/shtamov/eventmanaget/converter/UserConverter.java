@@ -1,17 +1,19 @@
 package ru.shtamov.eventmanaget.converter;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.shtamov.eventmanaget.model.domain.User;
 import ru.shtamov.eventmanaget.model.domain.UserRole;
 import ru.shtamov.eventmanaget.model.entity.UserEntity;
 
+@RequiredArgsConstructor
 @Component
 public class UserConverter {
 
-    public UserEntity toEntity(User user){
+    public UserEntity toEntity(User user, String password){
         return new UserEntity(
                 user.getLogin(),
-                user.getPassword(),
+                password,
                 user.getAge(),
                 user.getUserRole().name()
         );
@@ -19,7 +21,7 @@ public class UserConverter {
 
     public User toDomain(UserEntity userEntity){
         return new User(
-                Math.toIntExact(userEntity.getId()),
+                userEntity.getId(),
                 userEntity.getLogin(),
                 userEntity.getAge(),
                 UserRole.valueOf(userEntity.getUserRole())

@@ -28,8 +28,8 @@ public class JwtTokenManager {
 
         return Jwts
                 .builder()
+                .subject(login)
                 .signWith(key)
-                .content(login)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .compact();

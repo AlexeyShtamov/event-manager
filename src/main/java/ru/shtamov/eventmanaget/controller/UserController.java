@@ -20,7 +20,7 @@ public class UserController {
     private final UserDtoConverter userDtoConverter;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Integer id){
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userDtoConverter.toDto(userService.findById(id)));

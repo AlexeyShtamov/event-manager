@@ -1,5 +1,6 @@
 package ru.shtamov.eventmanaget.runner;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextStartedEvent;
@@ -28,7 +29,7 @@ public class UserRunners {
     @Value("${runner.admin-password}")
     private String adminPassword;
 
-    @EventListener(ContextStartedEvent.class)
+    @PostConstruct
     @Transactional
     public void run(){
         if (userRepository.count() == 0){
@@ -36,11 +37,13 @@ public class UserRunners {
             admin.setLogin(adminLogin);
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setUserRole(UserRole.ADMIN.name());
+            admin.setAge(20);
 
             UserEntity user = new UserEntity();
             user.setLogin(userLogin);
             user.setPassword(passwordEncoder.encode(userPassword));
-            admin.setUserRole(UserRole.USER.name());
+            user.setUserRole(UserRole.USER.name());
+            user.setAge(20);
 
             userRepository.save(admin);
             userRepository.save(user);

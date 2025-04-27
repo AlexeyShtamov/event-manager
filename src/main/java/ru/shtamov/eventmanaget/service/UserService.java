@@ -24,15 +24,15 @@ public class UserService {
         UserEntity userEntity = userRepository.findByLogin(login)
                 .orElseThrow(() -> new IllegalArgumentException("Нет пользователя с логином: " + login));
 
-        log.info("Найден пользователь с логином: {}", userEntity.getLogin());
+        log.info("Найден пользователь с логином: {}", login);
 
         return userConverter.toDomain(userEntity);
     }
 
-    public User findById(Integer id){
+    public User findById(Long id){
         User foundedUser = userConverter
                 .toDomain(
-                        userRepository.findById(Long.valueOf(id))
+                        userRepository.findById(id)
                                 .orElseThrow(() -> new NoSuchElementException("Нет пользователя с id: " + id))
                 );
 

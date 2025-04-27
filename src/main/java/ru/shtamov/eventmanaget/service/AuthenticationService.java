@@ -21,25 +21,21 @@ import ru.shtamov.eventmanaget.repositorie.UserRepository;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final UserConverter userConverter;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenManager jwtTokenManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public User registerUser(String login, String password, Integer age){
-        if (userRepository.existsByLogin(login))
-            throw new IsAlreadyExistException("Пользователь с логином %s уже существует".formatted(login));
+    public User registerUser(User user, String password){
+        if (userRepository.existsByLogin(user.getLogin()))
+            throw new IsAlreadyExistException("Пользователь с логином %s уже существует".formatted(user.getLogin()));
 
-        UserEntity userEntity = new UserEntity(
-                login,
-                passwordEncoder.encode(password),
-                age,
-                UserRole.USER.name()
-        );
+        UserEntity createdUserEntity = userRepository.save(userConverter.toEntity(user, passwordEncoder.encode(password)));
+        User createdUser = userConverter.toDomain(createdUserEntity);
 
-        log.info("Пользователь с логином {} создан", userEntity.getLogin());
+        log.info("Пользователь с логином {} создан", createdUser.getLogin());
 
-        return  userConverter.toDomain(userEntity);
+        return  createdUser;
     }
 
     public String authenticateUser(String login, String password){

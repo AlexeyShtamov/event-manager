@@ -47,13 +47,19 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
-                                .requestMatchers("/locations/**").authenticated()
                                 .requestMatchers(HttpMethod.POST, "/locations/**").hasAnyAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/locations/**").hasAnyAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/locations/**").hasAnyAuthority("ADMIN")
+                                .requestMatchers("/locations/**").authenticated()
 
-                                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/users/auth").permitAll()
+
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
+                                .requestMatchers("/openapi.yaml").permitAll()
                 )
                 .exceptionHandling(exception ->
                         exception
