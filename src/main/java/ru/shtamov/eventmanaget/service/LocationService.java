@@ -6,8 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.shtamov.eventmanaget.converter.LocationConverter;
 import ru.shtamov.eventmanaget.model.domain.Location;
 import ru.shtamov.eventmanaget.exception.IsAlreadyExistException;
-import ru.shtamov.eventmanaget.model.entity.LocationEntity;
-import ru.shtamov.eventmanaget.repositorie.LocationRepository;
+import ru.shtamov.eventmanaget.repository.LocationRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
