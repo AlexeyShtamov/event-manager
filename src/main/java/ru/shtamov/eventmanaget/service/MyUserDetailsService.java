@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.shtamov.eventmanaget.model.entity.UserEntity;
-import ru.shtamov.eventmanaget.repositorie.UserRepository;
+import ru.shtamov.eventmanaget.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor

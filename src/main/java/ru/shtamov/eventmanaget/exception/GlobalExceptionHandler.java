@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -23,6 +24,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IsAlreadyExistException.class)
     public ResponseEntity<ErrorResponseDto> handleIsAlreadyExistException(IsAlreadyExistException e){
         return generateResponse(HttpStatus.BAD_REQUEST, "Некорректный запрос", e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException e){
+        return generateResponse(HttpStatus.BAD_REQUEST, "Некорректный запрос", e.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccessDeniedException(AccessDeniedException e){
+        return generateResponse(HttpStatus.FORBIDDEN, "Недостаточно прав для выполнения операции", e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
