@@ -1,4 +1,4 @@
-package ru.shtamov.eventmanaget.repositorie;
+package ru.shtamov.eventmanaget.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
