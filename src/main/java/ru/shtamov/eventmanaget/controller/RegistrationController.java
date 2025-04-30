@@ -8,7 +8,6 @@ import ru.shtamov.eventmanaget.converter.EventDtoConverter;
 import ru.shtamov.eventmanaget.model.dto.EventDto;
 import ru.shtamov.eventmanaget.service.RegistrationService;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class RegistrationController {
     private final EventDtoConverter eventDtoConverter;
 
     @PostMapping("/{eventId}")
-    public ResponseEntity<Void> registerEvent(@PathVariable Long eventId) throws AccessDeniedException {
+    public ResponseEntity<Void> registerEvent(@PathVariable Long eventId){
         registrationService.registerEvent(eventId);
 
         return ResponseEntity
@@ -29,7 +28,7 @@ public class RegistrationController {
     }
 
     @DeleteMapping("/cancel/{eventId}")
-    public ResponseEntity<Void> cancelRegistrationEvent(@PathVariable Long eventId) throws AccessDeniedException {
+    public ResponseEntity<Void> cancelRegistrationEvent(@PathVariable Long eventId){
         registrationService.canselRegistration(eventId);
 
         return ResponseEntity

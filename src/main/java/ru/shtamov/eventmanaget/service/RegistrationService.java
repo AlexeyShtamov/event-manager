@@ -5,16 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shtamov.eventmanaget.converter.EventConverter;
-import ru.shtamov.eventmanaget.converter.RegistrationConverter;
 import ru.shtamov.eventmanaget.model.domain.Event;
 import ru.shtamov.eventmanaget.model.domain.EventStatus;
-import ru.shtamov.eventmanaget.model.domain.Registration;
 import ru.shtamov.eventmanaget.model.domain.User;
 import ru.shtamov.eventmanaget.model.entity.RegistrationEntity;
 import ru.shtamov.eventmanaget.repository.EventRepository;
 import ru.shtamov.eventmanaget.repository.RegistrationRepository;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Slf4j

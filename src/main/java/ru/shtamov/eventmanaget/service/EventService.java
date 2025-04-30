@@ -25,7 +25,6 @@ public class EventService {
     private final EventPermissionService eventPermissionService;
 
 
-    @Transactional
     public Event createEvent(Event event){
         Location location = locationService.findLocation(event.getLocationId());
         User owner = authenticationService.getCurrentAuthenticatedUserOrThrow();
@@ -42,16 +41,9 @@ public class EventService {
         return createdEvent;
     }
 
-    public Event findEvent(Long id){
-        Event event = findById(id);
-        log.info("Мероприятие с id {} найдено", id);
-
-        return event;
-    }
-
     @Transactional
     public Event updateEvent(Long id, Event event) throws AccessDeniedException {
-        Event foundedEvent = findEvent(id);
+        Event foundedEvent = findById(id);
 
         if (!foundedEvent.getLocationId().equals(event.getLocationId())){
             Location location = locationService.findLocation(event.getLocationId());
@@ -109,7 +101,7 @@ public class EventService {
 
     @Transactional
     public void deleteEvent(Long id) throws AccessDeniedException {
-        Event event = findEvent(id);
+        Event event = findById(id);
 
         if (eventPermissionService.canAuthenticatedUserModifyEvent(id)){
             throw new AccessDeniedException("Удалять мероприятие может только создатель мероприятия или админ");
@@ -135,7 +127,10 @@ public class EventService {
 
 
     public Event findById(Long id) {
-        return eventConverter.toDomain(
-                eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Нет мероприятия с id: " + id)));
+        Event foundedEvent = eventConverter.toDomain(
+                eventRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("Нет мероприятия с id: " + id)));
+        log.info("Найдено мероприятие с id {}", id);
+        return foundedEvent;
     }
 }

@@ -2,16 +2,14 @@ package ru.shtamov.eventmanaget.updater;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import ru.shtamov.eventmanaget.model.domain.EventStatus;
 import ru.shtamov.eventmanaget.repository.EventRepository;
 
 @Slf4j
 @RequiredArgsConstructor
-@EnableScheduling
-@Configuration
+@Component
 public class EventStatusScheduledUpdater {
 
     private final EventRepository eventRepository;
