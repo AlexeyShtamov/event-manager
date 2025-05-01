@@ -1,6 +1,7 @@
 package ru.shtamov.eventmanaget.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import ru.shtamov.eventmanaget.repository.EventRepository;
 
 import java.util.NoSuchElementException;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class EventPermissionService {
@@ -29,7 +31,21 @@ public class EventPermissionService {
         if (event == null) {
             throw new NoSuchElementException("Ошибка аутентификации");
         }
+
+        log.info("Пользователю с id {} разрешено выполнять операцию", currentUser.getId());
         return (event.getOwnerId().equals(currentUser.getId()) || currentUser.getUserRole().equals(UserRole.ADMIN));
+    }
+
+    public Long getAuthenticatedUserId(){
+        Authentication authentication = SecurityContextHolder.getContext().
+                getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new NoSuchElementException("Ошибка аутентификации");
+        }
+
+        User currentUser = (User) authentication.getPrincipal();
+        log.info("Получен id пользователя {}", currentUser.getLogin());
+        return currentUser.getId();
     }
 
 }

@@ -57,6 +57,7 @@ public class RegistrationService {
             throw new IllegalArgumentException("У вас нет регистрации на это мероприятие");
 
         var registration = registrationRepository.findByEventId(eventId);
+
         Event foundedEvent = eventService.findById(eventId);
 
         if (!foundedEvent.getStatus().equals(EventStatus.WAIT_START))
