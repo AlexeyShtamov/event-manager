@@ -20,7 +20,6 @@ public class UserDtoConverter {
 
     public User toDomain(RegisterUserDto userDto) {
         return new User(
-                null,
                 userDto.login(),
                 userDto.age(),
                 UserRole.USER

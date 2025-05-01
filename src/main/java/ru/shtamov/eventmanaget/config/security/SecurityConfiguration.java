@@ -57,6 +57,17 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/users/auth").permitAll()
 
+                                .requestMatchers(HttpMethod.GET, "/events/my").hasAnyAuthority("USER")
+                                .requestMatchers(HttpMethod.POST, "/events").hasAnyAuthority("USER")
+                                .requestMatchers(HttpMethod.POST, "/events/registrations/**").hasAnyAuthority("USER")
+                                .requestMatchers(HttpMethod.DELETE, "/events/**").authenticated()
+                                .requestMatchers(HttpMethod.POST, "/events/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/events/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/events/**").authenticated()
+
+                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/users/auth").permitAll()
+
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/openapi.yaml").permitAll()

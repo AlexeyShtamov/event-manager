@@ -1,8 +1,11 @@
 package ru.shtamov.eventmanaget.model.domain;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,6 +16,12 @@ public class User {
     private String password;
     private Integer age;
     private UserRole userRole;
+
+    public User(String login, Integer age, UserRole userRole) {
+        this.login = login;
+        this.age = age;
+        this.userRole = userRole;
+    }
 
     public User(Long id, String login, Integer age, UserRole userRole) {
         this.id = id;
