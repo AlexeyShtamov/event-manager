@@ -41,7 +41,6 @@ public class EventService {
         return createdEvent;
     }
 
-    @Transactional
     public Event updateEvent(Long id, Event event) throws AccessDeniedException {
         Event foundedEvent = findById(id);
 
@@ -99,7 +98,6 @@ public class EventService {
         return events;
     }
 
-    @Transactional
     public void deleteEvent(Long id) throws AccessDeniedException {
         Event event = findById(id);
 
