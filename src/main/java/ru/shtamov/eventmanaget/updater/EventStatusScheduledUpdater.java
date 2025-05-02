@@ -5,15 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.shtamov.eventmanaget.converter.EventConverter;
+import ru.shtamov.eventmanaget.helper.KafkaHelper;
 import ru.shtamov.eventmanaget.model.domain.EventStatus;
 import ru.shtamov.eventmanaget.model.entity.EventEntity;
-import ru.shtamov.eventmanaget.model.kafka.EventNotification;
-import ru.shtamov.eventmanaget.producer.EventNotificationProducer;
 import ru.shtamov.eventmanaget.repository.EventRepository;
 import ru.shtamov.eventmanaget.repository.RegistrationRepository;
-import ru.shtamov.eventmanaget.service.EventPermissionService;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,9 +17,9 @@ import java.util.List;
 public class EventStatusScheduledUpdater {
 
     private final EventRepository eventRepository;
-    private final EventPermissionService eventPermissionService;
+    private final EventConverter eventConverter;
     private final RegistrationRepository registrationRepository;
-    private final EventNotificationProducer eventNotificationProducer;
+    private final KafkaHelper kafkaHelper;
 
     @Scheduled(cron = "${event.stats.cron}")
     public void updateEventStatuses() {
@@ -41,13 +37,11 @@ public class EventStatusScheduledUpdater {
 
         eventRepository.changeEventStatus(event.getId(), newStatus);
 
-        eventNotificationProducer.eventSent(new EventNotification(
-                event.getId(),
-                eventPermissionService.getAuthenticatedUserId(),
-                event.getOwnerId(),
-                List.of(String.format("Старый статус: %s, Новый статус: %s"
-                        , oldStatus, newStatus)),
-                registrationRepository.findAllUserLoginByEventRegisterIdQuery(event.getId())
-        ));
+        kafkaHelper.getEventNotificationWithChangedStatus(
+                eventConverter.toDomain(event),
+                oldStatus,
+                newStatus,
+                null,
+                registrationRepository.findAllUserLoginByEventRegisterIdQuery(event.getId()));
     }
 }

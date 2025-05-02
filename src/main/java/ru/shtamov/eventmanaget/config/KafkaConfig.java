@@ -16,7 +16,7 @@ public class KafkaConfig {
     public KafkaTemplate<Long, EventNotification> kafkaTemplate(
             KafkaProperties kafkaProperties
     ){
-        var props = kafkaProperties.buildAdminProperties(new DefaultSslBundleRegistry());
+        var props = kafkaProperties.buildProducerProperties(new DefaultSslBundleRegistry());
 
         ProducerFactory<Long, EventNotification> producerFactory =
                 new DefaultKafkaProducerFactory<>(props);

@@ -8,7 +8,6 @@ import ru.shtamov.eventmanaget.converter.EventConverter;
 import ru.shtamov.eventmanaget.helper.KafkaHelper;
 import ru.shtamov.eventmanaget.model.domain.*;
 import ru.shtamov.eventmanaget.model.entity.EventEntity;
-import ru.shtamov.eventmanaget.model.kafka.EventNotification;
 import ru.shtamov.eventmanaget.producer.EventNotificationProducer;
 import ru.shtamov.eventmanaget.repository.EventRepository;
 import ru.shtamov.eventmanaget.repository.RegistrationRepository;
@@ -27,7 +26,6 @@ public class EventService {
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
     private final EventPermissionService eventPermissionService;
-    private final EventNotificationProducer eventNotificationProducer;
     private final RegistrationRepository registrationRepository;
     private final KafkaHelper kafkaHelper;
 
@@ -56,7 +54,7 @@ public class EventService {
             checkLocationCapacity(location, event);
         }
 
-        if (eventPermissionService.canAuthenticatedUserModifyEvent(id))
+        if (!eventPermissionService.canAuthenticatedUserModifyEvent(id))
             throw new AccessDeniedException("Обновить мероприятие может только создатель мероприятия или админ");
 
         if(event.getMaxPlaces() < foundedEvent.getOccupiedPlaces())
@@ -70,7 +68,11 @@ public class EventService {
 
         log.info("Мероприятие с id {} обновлено", id);
 
-        notify(foundedEvent, kafkaHelper.getChangedFields(oldEvent, foundedEvent), id);
+        kafkaHelper.getEventNotificationWithChangedFields(
+                oldEvent,
+                foundedEvent,
+                eventPermissionService.getAuthenticatedUserId(),
+                registrationRepository.findAllUserLoginByEventRegisterIdQuery(id));
 
         return foundedEvent;
     }
@@ -112,7 +114,7 @@ public class EventService {
     public void deleteEvent(Long id) throws AccessDeniedException {
         Event event = findById(id);
 
-        if (eventPermissionService.canAuthenticatedUserModifyEvent(id)){
+        if (!eventPermissionService.canAuthenticatedUserModifyEvent(id)){
             throw new AccessDeniedException("Удалять мероприятие может только создатель мероприятия или админ");
         }
 
@@ -123,8 +125,12 @@ public class EventService {
         event.setStatus(EventStatus.CANCELLED);
         eventRepository.save(eventConverter.toEntity(event));
 
-        notify(event, List.of(String.format("Старый статус: %s, Новый статус: %s"
-                , EventStatus.WAIT_START, EventStatus.CANCELLED)), id);
+        kafkaHelper.getEventNotificationWithChangedStatus(
+                event,
+                EventStatus.WAIT_START,
+                EventStatus.CANCELLED,
+                eventPermissionService.getAuthenticatedUserId(),
+                registrationRepository.findAllUserLoginByEventRegisterIdQuery(id));
 
         log.info("Мероприятие с id {} успешно отменено", id);
 
@@ -143,15 +149,5 @@ public class EventService {
         if (location.getCapacity() < event.getMaxPlaces())
             throw new IllegalArgumentException(("Локация не позволяет вместить столько участников. " +
                 "Макс. мест локации: %d, макс. мест мероприятия: %d").formatted(location.getCapacity(), event.getMaxPlaces()));
-    }
-
-    private void notify(Event event, List<String> changedFields, Long id) {
-        eventNotificationProducer.eventSent(new EventNotification(
-                event.getId(),
-                eventPermissionService.getAuthenticatedUserId(),
-                event.getOwnerId(),
-                changedFields,
-                registrationRepository.findAllUserLoginByEventRegisterIdQuery(id)
-        ));
     }
 }

@@ -23,13 +23,13 @@ public class EventPermissionService {
         Authentication authentication = SecurityContextHolder.getContext().
                 getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new NoSuchElementException("Ошибка аутентификации");
+            throw new NoSuchElementException("Ошибка аутентификации 1");
         }
         User currentUser = (User) authentication.getPrincipal();
         EventEntity event = eventRepository.findById(eventId).orElse(null);
 
         if (event == null) {
-            throw new NoSuchElementException("Ошибка аутентификации");
+            throw new NoSuchElementException("Ошибка аутентификации 2");
         }
 
         log.info("Пользователю с id {} разрешено выполнять операцию", currentUser.getId());

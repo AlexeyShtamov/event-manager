@@ -34,6 +34,9 @@ public class RegistrationService {
         if (registrationRepository.existsByEventIdAndUserId(foundedEvent.getId(), userRequest.getId()))
             throw new IllegalArgumentException("Вы уже записаны на это мероприятие");
 
+        if (foundedEvent.getOwnerId().equals(userRequest.getId()))
+            throw new IllegalArgumentException("Вы являетесь создателем мероприятия");
+
         if (!foundedEvent.getStatus().equals(EventStatus.WAIT_START))
             throw new IllegalArgumentException("Мероприятие отменено или уже прошло");
 
@@ -53,7 +56,7 @@ public class RegistrationService {
     public void canselRegistration(Long eventId) {
         User userRequest = authenticationService.getCurrentAuthenticatedUserOrThrow();
 
-        if (registrationRepository.existsByEventIdAndUserId(userRequest.getId(), eventId))
+        if (!registrationRepository.existsByEventIdAndUserId(eventId, userRequest.getId()))
             throw new IllegalArgumentException("У вас нет регистрации на это мероприятие");
 
         var registration = registrationRepository.findByEventId(eventId);
