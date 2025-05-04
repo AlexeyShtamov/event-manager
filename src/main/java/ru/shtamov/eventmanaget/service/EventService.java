@@ -46,6 +46,7 @@ public class EventService {
         return createdEvent;
     }
 
+
     public Event updateEvent(Long id, Event event) throws AccessDeniedException, CloneNotSupportedException {
         Event foundedEvent = findById(id);
 
