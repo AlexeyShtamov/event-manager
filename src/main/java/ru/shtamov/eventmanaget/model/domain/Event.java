@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Event{
+public class Event implements Cloneable{
     private Long id;
     private String name;
     private Long ownerId;
@@ -31,5 +31,10 @@ public class Event{
         this.duration = duration;
         this.locationId = locationId;
         this.occupiedPlaces = 0;
+    }
+
+    @Override
+    public Event clone() throws CloneNotSupportedException {
+        return (Event) super.clone();
     }
 }

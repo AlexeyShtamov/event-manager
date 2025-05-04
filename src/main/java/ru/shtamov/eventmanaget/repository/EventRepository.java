@@ -40,7 +40,7 @@ public interface EventRepository extends JpaRepository<EventEntity, Long> {
             String eventStatus
     );
 
-    @Query("SELECT e FROM EventEntity e WHERE e.date >= CURRENT_DATE AND e.status = :#{#eventStatus.name()}")
+    @Query("SELECT e FROM EventEntity e WHERE e.date <= CURRENT_DATE AND e.status = :#{#eventStatus.name()}")
     List<EventEntity> findStartedEventsWithStatus(EventStatus eventStatus);
 
     @Query("SELECT e FROM EventEntity e WHERE e.endTime >= CURRENT_DATE AND e.status = :#{#eventStatus.name()}")

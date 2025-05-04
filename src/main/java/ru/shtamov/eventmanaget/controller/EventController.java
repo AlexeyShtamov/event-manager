@@ -41,7 +41,7 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity<EventDto> getEvent(@PathVariable Long id) {
 
-        Event event = eventService.findEvent(id);
+        Event event = eventService.findById(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(eventDtoConverter.toDto(event));
@@ -68,7 +68,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventDto> updateEvent(@RequestBody @Valid CreateEventDto eventDto, @PathVariable Long id) throws AccessDeniedException {
+    public ResponseEntity<EventDto> updateEvent(@RequestBody @Valid CreateEventDto eventDto, @PathVariable Long id) throws AccessDeniedException, CloneNotSupportedException {
 
         Event event = eventDtoConverter.toDomain(eventDto);
         return ResponseEntity

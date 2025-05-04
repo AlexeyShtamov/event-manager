@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shtamov.eventmanaget.converter.EventConverter;
+import ru.shtamov.eventmanaget.helper.KafkaHelper;
 import ru.shtamov.eventmanaget.model.domain.*;
 import ru.shtamov.eventmanaget.model.entity.EventEntity;
+import ru.shtamov.eventmanaget.producer.EventNotificationProducer;
 import ru.shtamov.eventmanaget.repository.EventRepository;
+import ru.shtamov.eventmanaget.repository.RegistrationRepository;
 
 import java.nio.file.AccessDeniedException;
 import java.time.OffsetDateTime;
@@ -23,6 +26,8 @@ public class EventService {
     private final LocationService locationService;
     private final AuthenticationService authenticationService;
     private final EventPermissionService eventPermissionService;
+    private final RegistrationRepository registrationRepository;
+    private final KafkaHelper kafkaHelper;
 
 
     public Event createEvent(Event event){
@@ -41,7 +46,8 @@ public class EventService {
         return createdEvent;
     }
 
-    public Event updateEvent(Long id, Event event) throws AccessDeniedException {
+
+    public Event updateEvent(Long id, Event event) throws AccessDeniedException, CloneNotSupportedException {
         Event foundedEvent = findById(id);
 
         if (!foundedEvent.getLocationId().equals(event.getLocationId())){
@@ -49,17 +55,25 @@ public class EventService {
             checkLocationCapacity(location, event);
         }
 
-        if (eventPermissionService.canAuthenticatedUserModifyEvent(id))
+        if (!eventPermissionService.canAuthenticatedUserModifyEvent(id))
             throw new AccessDeniedException("Обновить мероприятие может только создатель мероприятия или админ");
 
         if(event.getMaxPlaces() < foundedEvent.getOccupiedPlaces())
             throw new IllegalArgumentException(("Максимальное количество мест не может быть меньше, чем число занятых мест. " +
                     "Число занятых мест %d. Максимальное кол-во место %d").formatted(foundedEvent.getOccupiedPlaces(), event.getMaxPlaces()));
 
+        Event oldEvent = foundedEvent.clone();
+
         eventConverter.updateEvent(foundedEvent, event);
         eventRepository.save(eventConverter.toEntity(foundedEvent));
 
         log.info("Мероприятие с id {} обновлено", id);
+
+        kafkaHelper.getEventNotificationWithChangedFields(
+                oldEvent,
+                foundedEvent,
+                eventPermissionService.getAuthenticatedUserId(),
+                registrationRepository.findAllUserLoginByEventRegisterIdQuery(id));
 
         return foundedEvent;
     }
@@ -101,7 +115,7 @@ public class EventService {
     public void deleteEvent(Long id) throws AccessDeniedException {
         Event event = findById(id);
 
-        if (eventPermissionService.canAuthenticatedUserModifyEvent(id)){
+        if (!eventPermissionService.canAuthenticatedUserModifyEvent(id)){
             throw new AccessDeniedException("Удалять мероприятие может только создатель мероприятия или админ");
         }
 
@@ -112,17 +126,17 @@ public class EventService {
         event.setStatus(EventStatus.CANCELLED);
         eventRepository.save(eventConverter.toEntity(event));
 
+        kafkaHelper.getEventNotificationWithChangedStatus(
+                event,
+                EventStatus.WAIT_START,
+                EventStatus.CANCELLED,
+                eventPermissionService.getAuthenticatedUserId(),
+                registrationRepository.findAllUserLoginByEventRegisterIdQuery(id));
+
         log.info("Мероприятие с id {} успешно отменено", id);
 
 
     }
-
-    private void checkLocationCapacity(Location location, Event event){
-        if (location.getCapacity() < event.getMaxPlaces())
-            throw new IllegalArgumentException(("Локация не позволяет вместить столько участников. " +
-                "Макс. мест локации: %d, макс. мест мероприятия: %d").formatted(location.getCapacity(), event.getMaxPlaces()));
-    }
-
 
     public Event findById(Long id) {
         Event foundedEvent = eventConverter.toDomain(
@@ -130,5 +144,11 @@ public class EventService {
                         .orElseThrow(() -> new IllegalArgumentException("Нет мероприятия с id: " + id)));
         log.info("Найдено мероприятие с id {}", id);
         return foundedEvent;
+    }
+
+    private void checkLocationCapacity(Location location, Event event){
+        if (location.getCapacity() < event.getMaxPlaces())
+            throw new IllegalArgumentException(("Локация не позволяет вместить столько участников. " +
+                "Макс. мест локации: %d, макс. мест мероприятия: %d").formatted(location.getCapacity(), event.getMaxPlaces()));
     }
 }
